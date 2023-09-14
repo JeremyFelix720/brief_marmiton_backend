@@ -1,5 +1,5 @@
 GET http://localhost:3032/
 ###
-GET http://localhost:3032/toto/
+POST http://localhost:3032/add_recipe/super_recette/55/4/
 ###
 
