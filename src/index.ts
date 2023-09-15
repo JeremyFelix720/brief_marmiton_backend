@@ -14,8 +14,8 @@ app.use(bodyParser.json())
 
 interface IMyBodyRequest {
   name: string,
-  duration: number,
   note: number,
+  duration: number,
   link: string
 }
 
@@ -28,10 +28,10 @@ const RecipesBdd = sequelize.define("RecipesBdd", {
   nom: {
     type: DataTypes.STRING,
   },
-  duree: {
+  note: {
     type: DataTypes.NUMBER,
   },
-  note: {
+  duree: {
     type: DataTypes.NUMBER,
   },
   url: {
@@ -41,22 +41,7 @@ const RecipesBdd = sequelize.define("RecipesBdd", {
   timestamps: false,
 })
 
-sequelize
-  .sync({ force: true })
-  .then(() => {
-    console.log('La synchronisation a réussi.');
-    RecipesBdd.create({
-    })
-    .then((recipe) => {
-      console.log("recipe", recipe)
-      RecipesBdd.findAll().then((recipes) => {
-        console.log("recipes", recipes)
-      })
-    })
-  })
-  .catch(error => {
-    console.error('Erreur de synchronisation:', error);
-  });
+sequelize.sync()
 
 
 app.get('/', (req, res) => {
@@ -84,30 +69,26 @@ app.post('/add_recipe/:name/:duree/:note/', (req, res) => {
 */
 
 // Deuxième méthode avec POST (plus efficace car...)
-
-/*
-app.post("/send-name", (req: Request<IMyBodyRequest>, res) => {
-  const name = req.body.name
-  console.log(name)
-  res.json({ name: name })
-})
-*/
-
 app.post("/add_recipes", async (req, res) => {
   const recipeName = req.body.name;
-  const recipeDuration = req.body.duration;
   const recipeNote = req.body.note;
+  const recipeDuration = req.body.duration;
   const recipeLink = req.body.link;
 
   const maNouvelleRecette = await RecipesBdd.create({
     nom: recipeName as string,
-    duree: recipeDuration as number,
     note: recipeNote as number,
+    duree: recipeDuration as number,
     url: recipeLink as string
   })
 
   console.log(maNouvelleRecette);
   res.json(maNouvelleRecette)
+})
+
+app.get("/get_all_recipes", async (req, res) => {
+  const savedRecipes = await RecipesBdd.findAll();
+  res.json(savedRecipes);
 })
 
 app.listen(port, () => {
